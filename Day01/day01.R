@@ -1,6 +1,6 @@
 
 # part 1
-fnm_input <- "input01.txt"
+fnm_input <- "input.txt"
 input <- read.csv(fnm_input, header = FALSE)
 # test
 test <- c(12, 14, 1969, 100756)
@@ -10,7 +10,7 @@ input <- input[[1]]
 sum(floor(input / 3) - 2)
 
 # part 2
-fnm_input <- "input01.txt"
+fnm_input <- "input.txt"
 input <- read.csv(fnm_input, header = FALSE)
 # test
 test <- c(14, 1969, 100756)
