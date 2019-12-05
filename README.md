@@ -2,11 +2,11 @@
 
 > Atempt to solve [Advent of Code 2019](https://adventofcode.com/2019/) puzzles with R
 
-#### Inputs
+#### Structure
 
-Each day puzzle is saved in a different folder:
+Each day's solution is saved in a different folder named DayXX. Folder may contain:
 
-* `input.txt` contains input of the puzzle
-* `testX.txt` contains testing inputs
-* `dayXX.R` is the main script
-* `fun.R` is the file for functions
+* `input.txt` - input of the puzzle
+* `testX.txt` - testing inputs (if any)
+* `dayXX.R` - main script
+* `fun.R` - file for functions
