@@ -27,8 +27,6 @@ run_program2 <- function(x, input){
     }
     if (opcode == 4){
       out <- c(out, x[pos1])
-      # input <- c(input, out)
-      # print(x[pos1])
       at <- at + 2
     }
     if (opcode == 5){
@@ -62,8 +60,7 @@ run_program2 <- function(x, input){
   return(out)
 }
 
-run_program3 <- function(x, input){
-  at <- 1
+run_program3 <- function(x, at, input){
   halt <- FALSE
   input_counter <- 1
   out <- numeric()
@@ -95,9 +92,8 @@ run_program3 <- function(x, input){
     }
     if (opcode == 4){
       out <- c(out, x[pos1])
-      # input <- c(input, out)
-      # print(x[pos1])
       at <- at + 2
+      return(list(x = x, at = at, out = out, halt = FALSE))
     }
     if (opcode == 5){
       if (x[pos1] != 0){
@@ -127,7 +123,7 @@ run_program3 <- function(x, input){
       halt <- TRUE
     }
   }
-  return(out)
+  return(list(x = x, at = at, out = out, halt = TRUE))
 }
 
 run_one_phase <- function(x, phase){
@@ -140,5 +136,44 @@ run_one_phase <- function(x, phase){
 }
 
 run_feedback_loop_one_phase <- function(x, phase){
-  
+  aa <- run_program3(x = x, at = 1, input = c(phase[1], 0))
+  bb <- run_program3(x = x, at = 1, input = c(phase[2], aa$out))
+  cc <- run_program3(x = x, at = 1, input = c(phase[3], bb$out))
+  dd <- run_program3(x = x, at = 1, input = c(phase[4], cc$out))
+  ee <- run_program3(x = x, at = 1, input = c(phase[5], dd$out))
+  while (!ee$halt){
+    aa <- run_program3(x = aa$x, at = aa$at, input = ee$out)
+    bb <- run_program3(x = bb$x, at = bb$at, input = aa$out)
+    cc <- run_program3(x = cc$x, at = cc$at, input = bb$out)
+    dd <- run_program3(x = dd$x, at = dd$at, input = cc$out)
+    ee <- run_program3(x = ee$x, at = ee$at, input = dd$out)
+    if (!ee$halt){
+      last_ee <- ee$out
+    }
+  }
+  return(last_ee)
+}
+
+find_max_signal <- function(inp, ph, fun){
+  all_combs <- expand.grid(ph, ph, ph, ph, ph)
+  w <- apply(all_combs, 1, function(x, y){all(y %in% x)}, y = ph)
+  all_combs <- all_combs[w, ]
+  ncomb <- nrow(all_combs)
+  thr <- numeric(ncomb)
+  for (i in 1:ncomb){
+    phase_i <- as.numeric(all_combs[i, ])
+    thr[i] <- fun(x = inp, phase = phase_i)
+  }
+  return(max(thr))
+}
+
+read_program <- function(fnm){
+  con <- file(fnm)
+  out <- con %>%
+    readLines() %>% 
+    strsplit(",") %>% 
+    `[[`(1) %>% 
+    as.numeric()
+  close(con)
+  return(out)
 }
